@@ -19,8 +19,8 @@ cleanup() {
 trap cleanup EXIT
 
 # A network of its own, so requests come from a private address. serversideup's
-# shim trusts those, so it would rewrite REMOTE_ADDR if it were still active;
-# a request from localhost inside the container would not show that.
+# default TRUSTED_PROXY trusts those, so it would rewrite REMOTE_ADDR if it were
+# still active; a request from localhost inside the container would not show that.
 docker network create "$name" >/dev/null
 docker run -d --name "$name" --network "$name" \
     -v "$app_dir:/var/www/html:ro" "$image" >/dev/null
@@ -48,8 +48,16 @@ for module in intl bcmath; do
 done
 echo "ok: intl and bcmath loaded"
 
-for pair in PHP_OPCACHE_ENABLE=1 SSL_MODE=off HEALTHCHECK_PATH=/up; do
+for pair in PHP_OPCACHE_ENABLE=1 PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 SSL_MODE=off HEALTHCHECK_PATH=/up TRUSTED_PROXY=off; do
     actual=$(docker exec "$name" printenv "${pair%%=*}")
     [ "$actual" = "${pair#*=}" ] || fail "${pair%%=*} is '$actual', expected '${pair#*=}'"
 done
 echo "ok: env defaults set"
+
+# Tags follow PHP, so a serversideup major arrives looking like a PHP patch.
+# Fails until it has a CHANGELOG entry; then bump this.
+serversideup_major=5
+base_version=$(docker inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "$image")
+[[ $base_version == "v$serversideup_major."* ]] ||
+    fail "serversideup is $base_version, not v$serversideup_major: add a CHANGELOG.md entry, then bump serversideup_major"
+echo "ok: serversideup $base_version"

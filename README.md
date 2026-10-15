@@ -4,9 +4,11 @@
 set up for Laravel apps behind a proxy:
 
 - `intl` and `bcmath` installed;
-- serversideup's real-IP shim emptied, so `REMOTE_ADDR` stays the proxy hop and
-  Laravel's trusted proxies resolve the client and scheme;
-- `PHP_OPCACHE_ENABLE=1`, `SSL_MODE=off` and `HEALTHCHECK_PATH=/up` as defaults.
+- `TRUSTED_PROXY=off`, so `REMOTE_ADDR` stays the proxy hop and Laravel's
+  trusted proxies resolve the client and scheme;
+- `PHP_OPCACHE_ENABLE=1`, `SSL_MODE=off` and `HEALTHCHECK_PATH=/up` as defaults;
+- `PHP_OPCACHE_VALIDATE_TIMESTAMPS=1`, so a mounted volume picks up edits. Set
+  it to `0` in production to skip the file checks.
 
 ```dockerfile
 FROM ghcr.io/robertboes/laravel-php:8.5.10@sha256:… AS base
@@ -25,7 +27,8 @@ php.net. No tag is immutable; pin the digest.
 
 The base image is pinned by version and digest in the `Dockerfile`. Renovate
 opens a PR when serversideup publishes a new one; merging it to `main` publishes
-this image.
+this image. A new serversideup major fails the tests until it has an entry in
+[CHANGELOG.md](CHANGELOG.md), which Renovate shows in apps' update PRs.
 
 ## Testing
 

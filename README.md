@@ -6,9 +6,9 @@ set up for Laravel apps behind a proxy:
 - `intl` and `bcmath` installed;
 - `TRUSTED_PROXY=off`, so `REMOTE_ADDR` stays the proxy hop and Laravel's
   trusted proxies resolve the client and scheme;
-- `PHP_OPCACHE_ENABLE=1`, `SSL_MODE=off` and `HEALTHCHECK_PATH=/up` as defaults.
-  OPcache does not check for file changes, so a container with the code mounted
-  as a volume needs `PHP_OPCACHE_VALIDATE_TIMESTAMPS=1` or a restart.
+- `PHP_OPCACHE_ENABLE=1`, `SSL_MODE=off` and `HEALTHCHECK_PATH=/up` as defaults;
+- `PHP_OPCACHE_VALIDATE_TIMESTAMPS=1`, so a mounted volume picks up edits. Set
+  it to `0` in production to skip the file checks.
 
 ```dockerfile
 FROM ghcr.io/robertboes/laravel-php:8.5.10@sha256:… AS base

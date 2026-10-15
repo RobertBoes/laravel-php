@@ -10,7 +10,10 @@ USER www-data
 # Behind a proxy (Caddy, a load balancer) that hides the proxy hop from
 # Laravel, which then ignores X-Forwarded-Proto and generates http URLs; the
 # application's trusted proxies resolve the client and scheme instead.
+# OPcache keeps checking for file changes, as before serversideup v5, so a
+# mounted volume still picks up edits; production can set it to 0.
 ENV PHP_OPCACHE_ENABLE=1 \
+    PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 \
     SSL_MODE=off \
     HEALTHCHECK_PATH=/up \
     TRUSTED_PROXY=off

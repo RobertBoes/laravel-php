@@ -48,7 +48,7 @@ for module in intl bcmath; do
 done
 echo "ok: intl and bcmath loaded"
 
-for pair in PHP_OPCACHE_ENABLE=1 SSL_MODE=off HEALTHCHECK_PATH=/up TRUSTED_PROXY=off; do
+for pair in PHP_OPCACHE_ENABLE=1 PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 SSL_MODE=off HEALTHCHECK_PATH=/up TRUSTED_PROXY=off; do
     actual=$(docker exec "$name" printenv "${pair%%=*}")
     [ "$actual" = "${pair#*=}" ] || fail "${pair%%=*} is '$actual', expected '${pair#*=}'"
 done

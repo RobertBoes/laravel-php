@@ -54,6 +54,13 @@ for pair in PHP_OPCACHE_ENABLE=1 PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 SSL_MODE=off 
 done
 echo "ok: env defaults set"
 
+# CVE-2026-115560 has no PHP fix yet; serversideup v5.0.3 turns session upload
+# progress off as the workaround. Keep it off until PHP ships the fix.
+upload_progress=$(docker exec "$name" php -r 'echo ini_get("session.upload_progress.enabled");')
+[ "$upload_progress" = 0 ] || [ -z "$upload_progress" ] ||
+    fail "session.upload_progress.enabled is '$upload_progress', expected off"
+echo "ok: session upload progress off"
+
 # Tags follow PHP, so a serversideup major arrives looking like a PHP patch.
 # Fails until it has a CHANGELOG entry; then bump this.
 serversideup_major=5

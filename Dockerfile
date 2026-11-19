@@ -1,5 +1,5 @@
 # Pinned by PHP version and digest; Renovate bumps both.
-FROM serversideup/php:8.5.12-fpm-nginx@sha256:385934673d575b9e41bca6d6341e4888670e1e81550a826c998b50748adc3d46
+FROM serversideup/php:8.5.13-fpm-nginx@sha256:07c0532a8364e257d6ed83716de1d16b678c08207025a49e00541e06e34fb412
 
 USER root
 RUN install-php-extensions intl bcmath
